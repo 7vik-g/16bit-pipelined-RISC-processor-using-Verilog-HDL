@@ -14,7 +14,7 @@ module CU1(
     wire CZ = p[6];
     wire CNZ = p[7];
     
-    decoder_3x8 instr_decoder1 (p, instr_stage1[15:12], 1'b1);
+    decoder_3x8 instr_decoder1 (p, instr_stage1[15:13], 1'b1);
     
     assign ALU_en = p[0] | (p[1]&(~instr_stage1[2]));
     assign rR1_en = ALU_en | p[3];
@@ -53,7 +53,7 @@ module CU2(
     wire RETNZ = p1f5&( instr_stage2[12])&(~instr_stage2[11]);
     assign HLT = p1f5&( instr_stage2[12])&( instr_stage2[11]);
     
-    decoder_3x8 instr_decoder2 (p, instr_stage2[15:12], 1'b1);
+    decoder_3x8 instr_decoder2 (p, instr_stage2[15:13], 1'b1);
         
     assign ALU_write_en = p[0] | (p[1]&(~instr_stage2[2]));
     assign Regw_en = ALU_write_en | mov | p[2];

@@ -113,8 +113,8 @@ module processor(
     CU1 Control_unit1 (instr_stage1, ALU_en, rR1_en, rR2_en, mov_en, SI_en,
                         Datar_en, iRW_regw_en, SP_load_en, dcr_SP, SPr);
     
-    CU2 Control_unit2 (instr_stage2, p_Z, Regw_en, iRW_regr_en, Dataw_en,
-                        PC_load_en, R_nJ, inr_SP, SPw, hlt);
+    CU2 Control_unit2 (instr_stage2, p_Z, ALU_write_en, Regw_en, iRW_regr_en,
+                        Dataw_en, PC_load_en, R_nJ, inr_SP, SPw, hlt);
     
     
 endmodule
