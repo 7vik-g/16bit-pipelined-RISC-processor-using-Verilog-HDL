@@ -1,5 +1,6 @@
 `timescale 1ns / 1ps
 
+
 module processor(
     input clk, reset,
     output [12:0] instr_mem_addr,
@@ -32,6 +33,7 @@ module processor(
     
     
     //------------------------------------register file-----------------------------------------------------
+    wire Regw_en, rR1_en, rR2_en;
     Register_file REGISTER_FILE (clk, reset, wR_addr, rR1_addr, rR2_addr, Regw_en,
                                  rR1_en, rR2_en, write_bus, R1_bus, R2_bus);
     
@@ -43,7 +45,7 @@ module processor(
     
     register_16bit regA (clk, reset, ALU_en, R1_bus, A);       // so that the read data stays on bus only in ALU_en cycle
     register_16bit regB (clk, reset, ALU_en, R2_bus, B);
-    bufif1 w_Result [15:0] (write_bus, Result, ALU_write_en);  // write of reg file should also be enabled in stage 2
+    tri_state_buffer_16bit w_Result (write_bus, Result, ALU_write_en);  // write of reg file should also be enabled in stage 2
     
     reg p_Z, p_CY;
     wire Z, CY;
@@ -58,23 +60,23 @@ module processor(
         assign Serial_output = p_CY;                    // Serial output=>  if opcode: 001 Rd xxxx0 010 (uses RCL) then MSB first,
                                                         // else if opcode: 001 Rd xxxx0 011 (uses RCR) then LSB first.
         
-    ALU (instr_stage2[13], instr_stage2[2:0], A, B, p_Z, p_CY_mux_SI, Result, Z, CY);
+    ALU Arithmetic_Logic_Unit (instr_stage2[13], instr_stage2[2:0], A, B, p_Z, p_CY_mux_SI, Result, Z, CY);
     
     
     //---------------------------Load & Store operations : Data_memory--------------------------------------
     wire iRW_regw_en, iRW_regr_en;
     wire Datar_en;
-    bufif1 #20 Data_R1 (R1_bus, read_data, Datar_en);                    // Data form memory => R1_bus
+    tri_state_buffer_16bit Data_R1 (R1_bus, read_data, Datar_en);                    // Data form memory => R1_bus
     
     wire [15:0] Q_iRW_reg;
     register_16bit iRW_reg (clk, reset, iRW_regw_en, R1_bus, Q_iRW_reg); // intermediate register b/w Read1 and write buses for pipelining
-    bufif1 #20 iRW_reg_data (write_bus, Q_iRW_reg, iRW_regr_en);
+    tri_state_buffer_16bit iRW_reg_data (write_bus, Q_iRW_reg, iRW_regr_en);
     assign write_data = write_bus;                                       // since we have Dataw_en;
-        
+    
     
     //---------------------------------------MOV operation--------------------------------------------------
     wire mov_en;
-    bufif1 #20 mov [15:0] (R1_bus, R2_bus, mov_en);         // since we can send the data to intermediate register from R1_bus
+    tri_state_buffer_16bit mov (R1_bus, R2_bus, mov_en);         // since we can send the data to intermediate register from R1_bus
     
     
     //-------------------------------program counter, JUMP & Call-------------------------------------------
@@ -84,7 +86,7 @@ module processor(
     
     assign PC_load = R_nJ ? write_bus[12:0] : instr_stage2[12:0];   // only for Return operation PC_load is connected to write_bus for retriving instr_mem_address from stack
                                                                     // so that stack read in stage1 is sent to iRW_reg and can be stored from write_bus in stage 2
-    buf #20 pc_load [12:0] (PC_load_addr, PC_load);                 // JZ and JNZ are executed in stage2 because the zero flag of previous
+    buffer pc_load [12:0] (PC_load_addr, PC_load);                 // JZ and JNZ are executed in stage2 because the zero flag of previous
                                                                     // operation gets updated when this instruction is at the end of stage1
     program_counter Program_counter (clk, reset, instr_mem_addr, PC_load_addr, PC_load_en);
     
@@ -93,12 +95,18 @@ module processor(
     //-----------------------------------stack pointer & Call-----------------------------------------------
     wire SP_load_en, inr_SP, dcr_SP;
     wire [7:0] SP, SP_load;
-    buf #20 sp_load [7:0] (SP_load, instr_stage1[10:3]);        // so as to execute any instruction related to SP without any NOP instruction and as this instruction 
+    buffer sp_load [7:0] (SP_load, instr_stage1[10:3]);        // so as to execute any instruction related to SP without any NOP instruction and as this instruction 
                                                                 // doesn't depend on p_Z, and other SP using instructions like Call and return
                                                                 // have two NOP instructions following them. => changing in stage1 doesn't affect anything
     
     stack_pointer Stack_pointer (clk, reset, SP_load, SP, SP_load_en, inr_SP, dcr_SP);
     
+        
+    //-------------------------------------data_memory_addr-------------------------------------------------
+    wire SPr, SPw;
+    wire [7:0] read_addr = SPr ? SP : instr_stage1[7:0];
+    wire [7:0] write_addr = SPw ? SP : instr_stage2[7:0];
+    assign data_mem_addr = ({8{Dataw_en}} & write_addr) | ({8{Datar_en}} & read_addr);
     
     
     //---------------------------------------control unit---------------------------------------------------
@@ -108,12 +116,6 @@ module processor(
     CU2 Control_unit2 (instr_stage2, p_Z, Regw_en, iRW_regr_en, Dataw_en,
                         PC_load_en, R_nJ, inr_SP, SPw, hlt);
     
-    
-    //-------------------------------------data_memory_addr-------------------------------------------------
-    wire SPr, SPw;
-    wire [7:0] read_addr = SPr ? SP : instr_stage1[7:0];
-    wire [7:0] write_addr = SPw ? SP : instr_stage2[7:0];
-    assign data_mem_addr = ({8{Dataw_en}} & write_addr) | ({8{Datar_en}} & read_addr);
     
 endmodule
 

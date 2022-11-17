@@ -16,17 +16,7 @@ module Register_file(
                    rR1_control (r1_control, rR1_addr, rR1_en),
                    rR2_control (r2_control, rR2_addr, rR2_en);
     
-    tri_state_buf_16bit #25 buff1 [0:31] (R1_data, r, r1_control),      // added delay to replicate practical scenario
-                            buff2 [0:31] (R2_data, r, r2_control);
-    
-endmodule
-
-module tri_state_buf_16bit(
-    output [15:0] o,
-    input [15:0] i,
-    input control
-    );
-    
-    bufif1 b [0:15] (o, i, control);
+    tri_state_buffer_16bit     buff1 [0:31] (R1_data, r, r1_control),
+                               buff2 [0:31] (R2_data, r, r2_control);
     
 endmodule

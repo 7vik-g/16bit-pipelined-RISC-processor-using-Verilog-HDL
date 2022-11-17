@@ -6,23 +6,17 @@ module ALU(
     input [15:0] A, B,
     input p_Z, p_CY,
     output [15:0] Y_out,
-    output Z_out, CY_out
+    output Z, CY
     );
     wire [15:0] Y0, Y1;
     wire Z0, CY0, Z1, CY1;
     
-    wire Z = op ? Z1 : Z0;
-    wire CY = op ? CY1 : CY0;
+    assign Z = op ? Z1 : Z0;
+    assign CY = op ? CY1 : CY0;
+    assign Y_out = op ? Y1 : Y0;
     
-    ALU000 ALU_000 (ALU_func, A, B, p_Z, p_CY, Y0, Z0, CY0);
+    ALU000 ALU_000 (ALU_func, A, B, p_CY, Y0, Z0, CY0);
     ALU001 ALU_001 (ALU_func[1:0], A, B, p_Z, p_CY, Y1, Z1, CY1); 
-    
-    // added delay in getting output to replicate real gates
-    wire op_bar = ~op;
-    bufif1 #30 Result1 [15:0] (Y_out, Y1, op);
-    bufif1 #30 Result0 [15:0] (Y_out, Y0, op_bar);
-    buf    #30    (CY_out, CY);
-    buf    #30    (Z_out, Z);
     
 endmodule
 
@@ -30,7 +24,7 @@ endmodule
 module ALU000(
     input [2:0] ALU_func,
     input [15:0] A, B,
-    input p_Z, p_CY,
+    input p_CY,
     output [15:0] Y,
     output reg Z, CY
     );
