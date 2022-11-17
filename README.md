@@ -6,14 +6,16 @@
 
 
 Processor schematic
-![processor_schematic1](https://user-images.githubusercontent.com/97520594/202520401-72d4a9eb-84e6-4165-bba4-f04cb39df76e.png)
-![processor_schematic2](https://user-images.githubusercontent.com/97520594/202520407-31db42d6-1803-44e7-bac4-9d32972de8c1.png)
+![processor_schematic1](https://user-images.githubusercontent.com/97520594/202527693-ed42324d-2df1-46be-a477-0ec00e922596.png)
+![processor_schematic2](https://user-images.githubusercontent.com/97520594/202527696-e68d08b8-25bb-48c9-8bbf-ce217adde9e2.png)
 
 
 ALU schematic
-![ALU_schematic](https://user-images.githubusercontent.com/97520594/202520563-5a068225-069e-4ff4-9a8e-b1336c4f873e.png)
+![ALU_schematic](https://user-images.githubusercontent.com/97520594/202527680-5959926b-3e10-4c98-9290-ae1fe6a81e47.png)
 
 
 Control unit schematic
-![Control_unit1_schematic](https://user-images.githubusercontent.com/97520594/202520569-1dfd3510-e9d0-4665-a333-9142adaf6dc3.png)
-![Control_unit2_schematic](https://user-images.githubusercontent.com/97520594/202520572-f80a96f6-bbf4-431c-a738-607342fbbf4d.png)
+![Control_unit1_schematic](https://user-images.githubusercontent.com/97520594/202527687-0c7c778b-efc2-4fdf-9011-4a955223990d.png)
+![Control_unit2_schematic](https://user-images.githubusercontent.com/97520594/202527689-11b1afc1-992a-4ee8-9a9c-ee918d242417.png)
+
+
