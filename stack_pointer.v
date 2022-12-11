@@ -10,7 +10,7 @@ module stack_pointer(
     wire [7:0] SP_next;
     
     always @(posedge clk, negedge reset)
-    if(!reset) SP <= 8'h10;                 // after reset: stack pointer to 16th memory location
+    if(!reset) SP <= 8'hF0;                 // after reset: stack pointer to 240th memory location
     else SP <= SP_next;
     
     // increment & decrement circuit

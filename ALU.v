@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-
 module ALU(
     input op,
     input [2:0] ALU_func,
@@ -32,8 +31,6 @@ module ALU000(
     reg C_in;
     wire C_out;
     
-    adder_16bit Adder_16bit (A_in, B_in, C_in, Y, C_out);
-    
     always @(*)
     case (ALU_func)
     3'b000 : begin A_in = A;        B_in = B;           C_in = p_CY;  CY = C_out;  Z = ~|Y; end      // {CY,Y} = A + B + p_CY;
@@ -46,8 +43,9 @@ module ALU000(
     3'b111 : begin A_in = A;        B_in = ~B;          C_in = 1'b1;  CY = ~C_out; Z = CY;  end      // if(A<B) Z = 1; else Z = 0;
     endcase
     
+    adder_16bit Adder_16bit (A_in, B_in, C_in, Y, C_out);
+    
 endmodule
-
 
 module ALU001(
     input [1:0] ALU_func,
@@ -59,10 +57,10 @@ module ALU001(
     
     always @(*)
     case (ALU_func)
-    2'b00 : begin Y = A&B;    CY = 1'b0;  Z = ~|Y; end    // AND  
-    2'b01 : begin Y = A|B;    CY = 1'b0;  Z = ~|Y; end    // OR   
-    2'b10 : begin {CY,Y} = {A,p_CY};      Z = p_Z; end    // RCL: Rotate with Carry Left  
-    2'b11 : begin {Y,CY} = {p_CY,A};      Z = p_Z; end    // RCR: Rotate with Carry Right 
+    2'b00 : begin Y = A&B;           CY = 1'b0;  Z = ~|Y; end    // AND  
+    2'b01 : begin Y = A|B;           CY = 1'b0;  Z = ~|Y; end    // OR   
+    2'b10 : begin {Y,CY} = {A[14:0],p_CY,A[15]};  Z = p_Z; end    // RCL: Rotate with Carry Left  
+    2'b11 : begin {Y,CY} = {p_CY,A};             Z = p_Z; end    // RCR: Rotate with Carry Right 
     endcase
     
 endmodule

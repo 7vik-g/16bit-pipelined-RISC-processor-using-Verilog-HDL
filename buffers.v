@@ -28,4 +28,3 @@ module buffer(
     buf normal_buf (Y, A);
     
 endmodule
-
