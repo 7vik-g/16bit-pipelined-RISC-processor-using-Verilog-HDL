@@ -10,8 +10,11 @@ module stack_pointer(
     wire [7:0] SP_next;
     
     always @(posedge clk, negedge reset)
-    if(!reset) SP <= 8'hF0;                 // after reset: stack pointer to 240th memory location
+        if(!reset) SP <= 8'hFF;                 // after reset: stack pointer to 255th memory location
     else SP <= SP_next;
+    
+    // while storing, decrement the SP and store in that location
+    // while loading, read from that location and increment the SP
     
     // increment & decrement circuit
     wire [7:0] A_in = ({8{inr_SP}} & SP) | ({8{dcr_SP}} & ~SP);
