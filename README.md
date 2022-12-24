@@ -19,3 +19,6 @@ Control unit schematic
 ![Control_unit2_schematic](https://user-images.githubusercontent.com/97520594/202527689-11b1afc1-992a-4ee8-9a9c-ee918d242417.png)
 
 
+ISA
+![ISA 0](https://user-images.githubusercontent.com/97520594/209435151-2c232ca6-db8d-407c-b4bf-b649aa638251.jpeg)
+![ISA 1](https://user-images.githubusercontent.com/97520594/209435154-c3989bb7-9cc3-49b3-b393-6b0960cd2947.jpeg)
